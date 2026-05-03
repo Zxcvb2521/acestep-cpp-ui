@@ -549,6 +549,30 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({
       setStyle(initialData.song.style);
       setTitle(initialData.song.title);
       setInstrumental(initialData.song.lyrics.length === 0);
+
+      const p = initialData.song.generationParams;
+      if (p) {
+        if (p.bpm !== undefined) setBpm(p.bpm);
+        if (p.guidanceScale !== undefined) setGuidanceScale(p.guidanceScale);
+        if (p.inferenceSteps !== undefined) setInferenceSteps(p.inferenceSteps);
+        if (p.inferMethod !== undefined) setInferMethod(p.inferMethod);
+        if (p.shift !== undefined) setShift(p.shift);
+        if (p.seed !== undefined) setSeed(p.seed);
+        if (p.randomSeed !== undefined) setRandomSeed(p.randomSeed);
+        if (p.duration !== undefined) setDuration(p.duration);
+        if (p.keyScale !== undefined) setKeyScale(p.keyScale);
+        if (p.timeSignature !== undefined) setTimeSignature(p.timeSignature);
+        if (p.vocalLanguage !== undefined) setVocalLanguage(p.vocalLanguage);
+        if (p.batchSize !== undefined) setBatchSize(p.batchSize);
+        if (p.audioFormat !== undefined) setAudioFormat(p.audioFormat);
+        if (p.lmTemperature !== undefined) setLmTemperature(p.lmTemperature);
+        if (p.lmCfgScale !== undefined) setLmCfgScale(p.lmCfgScale);
+        if (p.lmTopK !== undefined) setLmTopK(p.lmTopK);
+        if (p.lmTopP !== undefined) setLmTopP(p.lmTopP);
+        if (p.lmNegativePrompt !== undefined) setLmNegativePrompt(p.lmNegativePrompt);
+        if (p.lmBackend !== undefined) setLmBackend(p.lmBackend);
+        if (p.lmModel !== undefined) setLmModel(p.lmModel);
+      }
     }
   }, [initialData]);
 
