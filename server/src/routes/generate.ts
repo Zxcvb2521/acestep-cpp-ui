@@ -575,7 +575,7 @@ router.delete('/:jobId', authMiddleware, async (req: AuthenticatedRequest, res: 
       `SELECT acestep_task_id FROM generation_jobs WHERE id = ? AND user_id = ?`,
       [jobId, req.user!.id]
     );
-    const aceTaskId = (rows as any[])[0]?.acestep_task_id as string | undefined;
+    const aceTaskId = ((rows as unknown) as any[])[0]?.acestep_task_id as string | undefined;
 
     // Mark as cancelled in the DB regardless
     await pool.query(
