@@ -3,6 +3,7 @@ import { Sparkles, ChevronDown, Settings2, Trash2, Music2, Sliders, Dices, Hash,
 import { GenerationParams, Song } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
+import { PresetManager, PresetData } from './PresetManager';
 import { generateApi } from '../services/api';
 import { MAIN_STYLES } from '../data/genres';
 import { EditableSlider } from './EditableSlider';
@@ -284,6 +285,10 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({
       { id: 'acestep-v15-turbo-shift1', name: 'acestep-v15-turbo-shift1' },
       { id: 'acestep-v15-turbo-shift3', name: 'acestep-v15-turbo-shift3' },
       { id: 'acestep-v15-turbo-continuous', name: 'acestep-v15-turbo-continuous' },
+      { id: 'acestep-v15-xl-turbo', name: 'acestep-v15-xl-turbo' },
+      { id: 'acestep-v15-xl-sftturbo50', name: 'acestep-v15-xl-sftturbo50' },
+      { id: 'acestep-v15-xl-sft', name: 'acestep-v15-xl-sft' },
+      { id: 'acestep-v15-xl-base', name: 'acestep-v15-xl-base' },
     ];
   }, [fetchedModels]);
 
@@ -296,6 +301,10 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({
       'acestep-v15-turbo-shift3': '1.5TS3',
       'acestep-v15-turbo-continuous': '1.5TC',
       'acestep-v15-turbo': '1.5T',
+      'acestep-v15-xl-turbo': '1.5XL-T',
+      'acestep-v15-xl-sftturbo50': '1.5XL-ST50',
+      'acestep-v15-xl-sft': '1.5XL-S',
+      'acestep-v15-xl-base': '1.5XL-B',
     };
     return mapping[modelId] || modelId;
   };
@@ -312,7 +321,7 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({
 
   // Check if model is the base variant (required for lego)
   const isBaseModel = (modelId: string): boolean => {
-    return modelId.startsWith('acestep-v15-base');
+    return modelId.includes('acestep-v15-base') || modelId.includes('acestep-v15-xl-base');
   };
 
   // SFT model download/availability state for repaint mode
@@ -549,6 +558,30 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({
       setStyle(initialData.song.style);
       setTitle(initialData.song.title);
       setInstrumental(initialData.song.lyrics.length === 0);
+
+      const p = initialData.song.generationParams;
+      if (p) {
+        if (p.bpm !== undefined) setBpm(p.bpm);
+        if (p.guidanceScale !== undefined) setGuidanceScale(p.guidanceScale);
+        if (p.inferenceSteps !== undefined) setInferenceSteps(p.inferenceSteps);
+        if (p.inferMethod !== undefined) setInferMethod(p.inferMethod);
+        if (p.shift !== undefined) setShift(p.shift);
+        if (p.seed !== undefined) setSeed(p.seed);
+        if (p.randomSeed !== undefined) setRandomSeed(p.randomSeed);
+        if (p.duration !== undefined) setDuration(p.duration);
+        if (p.keyScale !== undefined) setKeyScale(p.keyScale);
+        if (p.timeSignature !== undefined) setTimeSignature(p.timeSignature);
+        if (p.vocalLanguage !== undefined) setVocalLanguage(p.vocalLanguage);
+        if (p.batchSize !== undefined) setBatchSize(p.batchSize);
+        if (p.audioFormat !== undefined) setAudioFormat(p.audioFormat);
+        if (p.lmTemperature !== undefined) setLmTemperature(p.lmTemperature);
+        if (p.lmCfgScale !== undefined) setLmCfgScale(p.lmCfgScale);
+        if (p.lmTopK !== undefined) setLmTopK(p.lmTopK);
+        if (p.lmTopP !== undefined) setLmTopP(p.lmTopP);
+        if (p.lmNegativePrompt !== undefined) setLmNegativePrompt(p.lmNegativePrompt);
+        if (p.lmBackend !== undefined) setLmBackend(p.lmBackend);
+        if (p.lmModel !== undefined) setLmModel(p.lmModel);
+      }
     }
   }, [initialData]);
 
@@ -1453,6 +1486,46 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({
           </div>
         </div>
 
+
+        {/* PRESET BAR */}
+        <PresetManager
+          currentValues={{
+            style, musicTags,
+            lyrics,
+            instrumental, vocalLanguage, vocalGender,
+            duration, bpm, keyScale, timeSignature,
+            inferenceSteps, guidanceScale, shift, inferMethod, batchSize,
+            lmTemperature, lmCfgScale, lmTopP, lmTopK, lmNegativePrompt,
+            loraPath, loraEnabled, loraScale,
+            taskType,
+          }}
+          onLoad={(data: PresetData) => {
+            if (data.style !== undefined) setStyle(data.style);
+            if (data.musicTags !== undefined) setMusicTags(data.musicTags);
+            if (data.lyrics !== undefined) setLyrics(data.lyrics);
+            if (data.instrumental !== undefined) setInstrumental(data.instrumental);
+            if (data.vocalLanguage !== undefined) setVocalLanguage(data.vocalLanguage);
+            if (data.vocalGender !== undefined) setVocalGender(data.vocalGender as 'male' | 'female' | '');
+            if (data.duration !== undefined) setDuration(data.duration);
+            if (data.bpm !== undefined) setBpm(data.bpm);
+            if (data.keyScale !== undefined) setKeyScale(data.keyScale);
+            if (data.timeSignature !== undefined) setTimeSignature(data.timeSignature);
+            if (data.inferenceSteps !== undefined) setInferenceSteps(data.inferenceSteps);
+            if (data.guidanceScale !== undefined) setGuidanceScale(data.guidanceScale);
+            if (data.shift !== undefined) setShift(data.shift);
+            if (data.inferMethod !== undefined) setInferMethod(data.inferMethod as 'ode' | 'sde');
+            if (data.batchSize !== undefined) setBatchSize(data.batchSize);
+            if (data.lmTemperature !== undefined) setLmTemperature(data.lmTemperature);
+            if (data.lmCfgScale !== undefined) setLmCfgScale(data.lmCfgScale);
+            if (data.lmTopP !== undefined) setLmTopP(data.lmTopP);
+            if (data.lmTopK !== undefined) setLmTopK(data.lmTopK);
+            if (data.lmNegativePrompt !== undefined) setLmNegativePrompt(data.lmNegativePrompt);
+            if (data.loraPath !== undefined) setLoraPath(data.loraPath);
+            if (data.loraEnabled !== undefined) setLoraEnabled(data.loraEnabled);
+            if (data.loraScale !== undefined) setLoraScale(data.loraScale);
+            if (data.taskType !== undefined) setTaskType(data.taskType);
+          }}
+        />
 
         {/* UNIFIED PANEL */}
         <div className="space-y-5">
